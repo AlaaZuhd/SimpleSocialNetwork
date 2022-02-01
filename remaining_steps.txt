@@ -1,0 +1,7 @@
+--------------------- <<<< Basic Steps that are remaining >>> ---------------------------
+1- extract text fileds from the multipart form in create story. 
+2- show user's friends stories
+3- delete stories after 24 hours. 
+4- add IsFriend permission for the needed request. 
+5- check the response body for al requests. 
+6- read about queries optimizations for many to many fields.
