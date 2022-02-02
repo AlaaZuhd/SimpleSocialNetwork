@@ -32,6 +32,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         profile = Profile.create(self, request.user, request.data)
+        if request.data.get('bio'):
+            profile.bio = request.data['bio']
+        if request.data.get('address'):
+            profile.address = request.data['address']
         response = {
             'status': status.HTTP_201_CREATED,
             'code': status.HTTP_201_CREATED,
