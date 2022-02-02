@@ -9,5 +9,6 @@ urlpatterns = format_suffix_patterns([
          name='profiles'),
     path('<str:pk>/', views.ProfileViewSet.as_view({'put': 'update'}),
          name='profiles'),
+
 ])
 

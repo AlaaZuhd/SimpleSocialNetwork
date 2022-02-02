@@ -1,9 +1,11 @@
+import requests
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from helpers.permissions import IsAuthenticated, IsOwner
 from .models import Account
@@ -22,9 +24,12 @@ class AccountViewSet(viewsets.ModelViewSet):
         else:
             return AccountDisplaySerializer
 
+
     def get_permissions(self):
-        if self.action == 'post':
+        if self.action == 'create':
             permission_classes = []
+        elif self.action == 'list' or self.action == 'retrieve':
+            permission_classes = [IsAuthenticated]
         else:
             permission_classes = [IsAuthenticated and (IsOwner)]
         return [permission() for permission in permission_classes]
@@ -42,15 +47,23 @@ class AccountViewSet(viewsets.ModelViewSet):
             new_user.save()
             new_account = Account(user=new_user)
             new_account.save()
-        except Exception:
-            return Response({"errorMessage": "Invalid username"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response("Account Created Successfully", status=status.HTTP_201_CREATED)
+            data = {'username': request.data['username'],
+                    'password': request.data['password']}
+            r = requests.post(url="http://localhost:8000/api/token/", data=data)
+        except Exception as e:
+            print(e)
+            return Response({"errorMessage": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"Message": "Account has been created successfully",
+                         "Tokens": r.json()}, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
-        user = User.objects.get(id=request.user.id)
-        user.is_active = False
-        user.save()
-        return Response("user has been deactivated successfully", status=status.HTTP_204_NO_CONTENT)
+        if kwargs['pk'] == request.user.id:
+            user = User.objects.get(id=request.user.id)
+            user.is_active = False
+            user.save()
+            return Response({"Message": "user has been deactivated successfully"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"Message": "You are not allowed to delete other users"})
 
     def update(self, request, *args, **kwargs):
         user  = User.objects.get(username= request.user.username)
@@ -67,5 +80,13 @@ class AccountViewSet(viewsets.ModelViewSet):
             }
             return Response(response)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        print(self.queryset)
+        return Response({"data":self.get_serializer(self.queryset, many=True).data})
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = Account.objects.get(id=kwargs["pk"])
+        return Response(self.get_serializer(instance).data)
 
 

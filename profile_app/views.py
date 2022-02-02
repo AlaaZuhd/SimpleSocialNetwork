@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import viewsets, status
 from account.models import Account
-from helpers.permissions import IsAuthenticated, IsOwner
+from helpers.permissions import IsAuthenticated, IsOwner, IsProfileOwner
 from .models import Profile
 from .serializers import ProfileSerializer
 # Create your views here.
@@ -19,12 +19,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_permissions(self):
-        if self.action == 'post':
-            permission_classes = []
-        elif self.action == 'update':
-            permission_classes = [IsAuthenticated and (IsOwner)]
+        if self.action == 'update' or self.action == 'partial_update' or self.action == 'delete':
+            permission_classes = [IsAuthenticated and IsProfileOwner]
         else: # come back for ths permission
-            permission_classes = []
+            permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
     def get_object(self):
@@ -32,27 +30,20 @@ class ProfileViewSet(viewsets.ModelViewSet):
             self.kwargs['pk'] = Profile.objects.get(account__user__id =self.request.user.pk).id
         return super(ProfileViewSet, self).get_object()
 
-    def list(self, request, *args, **kwargs):
-        pass
-
     def create(self, request, *args, **kwargs):
-        # get the registered account for this profile
-        user = User.objects.get(id=request.user.id)
-        Profile.create(self, request.user, request.data)
+        profile = Profile.create(self, request.user, request.data)
         response = {
             'status': status.HTTP_201_CREATED,
             'code': status.HTTP_201_CREATED,
             'message': 'Profile Created Successfully',
-            'data': [],
+            'data': self.get_serializer(profile).data,
             'ok': True
         }
         return Response(response)
 
-    def update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs):
         profile = self.get_object()
-        if kwargs.get('bio', None) != None:
-            profile.bio = kwargs['bio']
-        if kwargs.get('address', None) != None:
-            profile.address = kwargs['address']
-        return Response({"Message": ProfileSerializer(profile).data})
+        profile.bio = request.data.get('bio', profile.bio)
+        profile.address = request.data.get('address', profile.address)
+        return Response({"Message": self.get_serializer(profile).data})
 

@@ -33,6 +33,7 @@ class LikeSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Like
+        model = Comment
         fields = '__all__'
+        write_only_fields = ['content']
         read_only_fields = ['owner', 'post']

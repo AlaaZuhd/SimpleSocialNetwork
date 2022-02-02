@@ -6,7 +6,7 @@ class AccountDisplaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['username']
+        fields = '__all__'
 
 
 class AccountCreateSerializer(serializers.ModelSerializer):

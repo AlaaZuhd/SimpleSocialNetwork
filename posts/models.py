@@ -6,8 +6,8 @@ from profile_app.models import Profile
 
 
 class Post(CreatedDateModel):
-    title = models.CharField(max_length=100, blank=False)
-    content = models.CharField(max_length=300, blank=False)
+    title = models.CharField(max_length=100)
+    content = models.CharField(max_length=300)
     owner = models.ForeignKey(Profile, related_name='posts', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -22,7 +22,7 @@ class Post(CreatedDateModel):
 
 
 class Comment(CreatedDateModel):
-    content = models.TextField()
+    content = models.CharField(max_length=300)
     owner = models.ForeignKey(Profile, null=True, related_name='comments', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, null=True, related_name='comments', on_delete=models.CASCADE)
 

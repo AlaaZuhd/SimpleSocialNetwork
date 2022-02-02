@@ -7,6 +7,7 @@ class StorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Story
         fields = '__all__'
+        read_only_fields = ['owner']
 
     def validate(self, data):
         if 'content' not in data and 'image' not in data:

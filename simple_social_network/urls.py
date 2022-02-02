@@ -20,16 +20,51 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf.urls.static import static
 from django.conf import settings
 
+from friends import views as friend_views
+from profile_app import views as profile_views
+from posts import views as posts_views
+from stories import views as stories_views
 from account import views
 
+account_router = routers.DefaultRouter()
+account_router.register('', views.AccountViewSet, basename='accounts')
+
+friend_requests_router = routers.DefaultRouter()
+friend_requests_router.register('', friend_views.FriendViewSet, basename='friends')
+
+profile_app_router = routers.DefaultRouter()
+profile_app_router.register('', profile_views.ProfileViewSet, basename='profiles')
+
+posts_router = routers.DefaultRouter()
+posts_router.register('', posts_views.PostViewSet, basename='posts')
+
+likes_router = routers.DefaultRouter()
+likes_router.register('', posts_views.LikeViewSet, basename='likes')
+
+comments_router = routers.DefaultRouter()
+comments_router.register('', posts_views.CommentViewSet, basename='comments')
+
+stories_router = routers.DefaultRouter()
+stories_router.register('', stories_views.StoryViewSet, basename='stories')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('accounts/', include(account_router.urls)),
     path('accounts/', include('account.urls')),
+
+    path('profiles/', include(profile_app_router.urls)),
     path('profiles/', include('profile_app.urls')),
-    path('posts/', include('posts.urls')),
-    path('friends/', include('friends.urls')),
-    path('stories/', include('stories.urls'))
+
+    path('posts/', include(posts_router.urls)),
+    path('posts/<int:post_id>/likes/', include(likes_router.urls)),
+    path('likes/', include(likes_router.urls)),
+    path('posts/<int:post_id>/comments/', include(comments_router.urls)),
+    path('comments/', include(comments_router.urls)),
+
+    path('friends/', include(friend_requests_router.urls)),
+
+    path('stories/', include(stories_router.urls)),
 ]
 
 urlpatterns += [
