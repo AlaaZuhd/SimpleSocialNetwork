@@ -30,7 +30,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../SimpleSocialNetwork" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
@@ -66,6 +66,7 @@
       <updated>1643698426705</updated>
       <workItem from="1643698431474" duration="34860000" />
       <workItem from="1643782308734" duration="27761000" />
+      <workItem from="1643811991552" duration="111000" />
     </task>
     <servers />
   </component>
