@@ -16,10 +16,6 @@ class Profile(models.Model):
     #
     def create(self, user, validated_data):
         profile = Profile()
-        if validated_data.get('bio', None) != None:
-            profile.bio =validated_data['bio']
-        elif validated_data.get('address', None) != None:
-            profile.address =validated_data['address']
         account = Account.objects.filter(user=user).first()
         profile.account = account
         profile.save()
