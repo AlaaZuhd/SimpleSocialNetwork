@@ -4,8 +4,8 @@
 
 ### 1- install the needed packages: 
 #### pip install -r requirements.txt 
-### 2- run the project: 
-#### python manage.py runserver
+### 2- run the project in the production mode: 
+#### python manage.py runserver --settings=simple_social_network.production_settings
 ### 3- run the celery worker to do the tasks in the background: 
 #### celery -A simple_social_network.celery worker --pool=solo -l info
 ### 4- run the celery worker to do the tasks periodically: 
